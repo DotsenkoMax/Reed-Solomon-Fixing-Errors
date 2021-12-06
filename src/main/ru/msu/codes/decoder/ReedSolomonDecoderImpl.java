@@ -1,38 +1,37 @@
 package ru.msu.codes.decoder;
 
-import ru.msu.codes.CharToHexRepr;
 import ru.msu.codes.GaluaFieldAriphmetic;
 import ru.msu.codes.Polynomial;
 import ru.msu.codes.PolynomialArithmetic;
 
 public class ReedSolomonDecoderImpl implements ReedSolomonDecoder {
     public final GaluaFieldAriphmetic gFLogic;
-    public final SyndromesPolynomialCalculator sundromes;
-    public final ErrorLocator errorLocator;
-    public final MagnitudeSearcher magnitudeSearcher;
+    public final SyndromesService sundromes;
+    public final ErrorLocatorService errorLocatorService;
+    public final AmplitudeService amplitudeService;
 
     public ReedSolomonDecoderImpl(GaluaFieldAriphmetic gFLogic) {
         this.gFLogic = gFLogic;
-        this.sundromes = new SyndromesPolynomialCalculator(gFLogic);
-        this.errorLocator = new ErrorLocator(gFLogic);
-        this.magnitudeSearcher = new MagnitudeSearcher(gFLogic);
+        this.sundromes = new SyndromesService(gFLogic);
+        this.errorLocatorService = new ErrorLocatorService(gFLogic);
+        this.amplitudeService = new AmplitudeService(gFLogic);
     }
 
 
     @Override
-    public char[] decodeMessage(char[] messageIn, int nSym, PolynomialArithmetic polynomialArithmetic) {
+    public int[] decodeMessage(int[] messageIn, int nSym, PolynomialArithmetic polynomialArithmetic) {
         Polynomial corrupted = new Polynomial(messageIn, gFLogic);
-        Polynomial syndrom = sundromes.calcSyndromes(corrupted, nSym);
+        Polynomial syndrome = sundromes.calcSyndromes(corrupted, nSym);
 
-        if (syndrom.isZeroArray()) {
-            return CharToHexRepr.toChar(corrupted.getWithoutPrefix(nSym));
+        if (syndrome.isZeroArray()) {
+            return corrupted.deletePrefix(nSym); // Deleting error correction symbols
         }
 
-        Polynomial errLocatorPol = errorLocator.findErrorLocator(syndrom, nSym);
-        var errorPositions = errorLocator.findPositions(errLocatorPol, messageIn.length);
-        var magnitude = magnitudeSearcher.findMagnitude(errorPositions, syndrom, errLocatorPol, nSym, messageIn.length);
-        var decodedPolynomial = magnitudeSearcher.findRealPolynomial(magnitude, corrupted, nSym);
-        return decodedPolynomial.toCharArray();
+        var errLocatorPol = errorLocatorService.findErrorLocator(syndrome, nSym); // Berlekamp–Massey
+        var errorPositions = errorLocatorService.findPositions(errLocatorPol, messageIn.length);
+        var magnitude = amplitudeService.findMagnitude(errorPositions, syndrome, errLocatorPol, nSym, messageIn.length);
+        var decodedPolynomial = amplitudeService.findRealPolynomial(magnitude, corrupted);
+        return decodedPolynomial.deletePrefix(nSym); // Deleting error correction symbols
     }
 
 

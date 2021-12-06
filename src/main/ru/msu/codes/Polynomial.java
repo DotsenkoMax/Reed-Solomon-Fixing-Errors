@@ -5,6 +5,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 
+@SuppressWarnings("unchecked")
 public class Polynomial {
     /**
      * ASC DEGREE ORDER
@@ -41,14 +42,6 @@ public class Polynomial {
         return pol.get(i);
     }
 
-    public void deleteLeadingZeroes() {
-        int idx = degree();
-        while (idx >= 0 && pol.get(idx) == 0) {
-            pol.remove(pol.size() - 1);
-            --idx;
-        }
-    }
-
     private void fill(ArrayList<Integer> ar, int sz) {
         for (int i = 0; i < sz; i++) {
             ar.add(0);
@@ -81,7 +74,7 @@ public class Polynomial {
         return newPol;
     }
 
-    public Polynomial scale(int val) {
+    public Polynomial multConst(int val) {
         Polynomial polynomial = new Polynomial(new int[this.degree() + 1], gFLogic);
         for (int i = 0; i <= this.degree(); i++) {
             polynomial.pol.set(i, gFLogic.multiply(pol.get(i), val));
@@ -105,7 +98,7 @@ public class Polynomial {
     /**
      * (this, rhs) -> Pol([rhs , this])
      */
-    public Polynomial appendWithShifting(Polynomial rhs) {
+    public Polynomial appendLeft(Polynomial rhs) {
         ArrayList<Integer> ar = new ArrayList<>(degree() + rhs.degree() + 2);
         ar.addAll(rhs.pol);
         ar.addAll(pol);
@@ -158,17 +151,13 @@ public class Polynomial {
         return ArrayUtils.toPrimitive(pol.toArray(new Integer[0]));
     }
 
-    public int[] getWithoutPrefix(int nSym) {
+    public int[] deletePrefix(int nSym) {
         int[] arr = new int[pol.size() - nSym];
         for (int i = nSym; i < pol.size(); i++) {
             arr[i - nSym] = pol.get(i);
         }
         return arr;
     }
-
-//    public Polynomial getPolWithoutSuffix(int nSym) {
-//        return new Polynomial(Arrays.copyOfRange(pol, 0, pol.length - nSym), gFLogic);
-//    }
 
     public Polynomial getOnlyPrefix(int nSym) {
         ArrayList<Integer> clonedPol = (ArrayList<Integer>) pol.clone();
@@ -178,7 +167,7 @@ public class Polynomial {
         return new Polynomial(clonedPol, gFLogic);
     }
 
-    public Polynomial getPolWithoutPrefix(int nSym) {
+    public Polynomial deletePolynomPrefix(int nSym) {
         ArrayList<Integer> clonedPol = reverse().pol;
         var realLength = clonedPol.size() - nSym;
         while (clonedPol.size() != realLength) {

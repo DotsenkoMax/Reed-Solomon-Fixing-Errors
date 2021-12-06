@@ -2,9 +2,10 @@ package ru.msu.codes;
 
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import ru.msu.codes.decoder.ErrorLocator;
-import ru.msu.codes.decoder.MagnitudeSearcher;
-import ru.msu.codes.decoder.SyndromesPolynomialCalculator;
+import ru.msu.codes.decoder.ErrorLocatorService;
+import ru.msu.codes.decoder.AmplitudeService;
+import ru.msu.codes.decoder.SyndromesService;
+import ru.msu.codes.encoder.ReedSolomonEncoderImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,8 +50,8 @@ public class FlowTests {
         polArithm.initGeneratorPolynomial(nSym);
 
         var initital = new int[]{0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43}; // DONT PANIC
-        var encoded = encoder.genMessageAndRsCode(CharToHexRepr.toChar(initital), nSym, polArithm);
-        Assertions.assertArrayEquals(new char[]{
+        var encoded = encoder.genMessageAndRsCode(initital, nSym, polArithm);
+        Assertions.assertArrayEquals(new int[]{
                         0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43
                 },
                 encoded
@@ -63,7 +64,7 @@ public class FlowTests {
         gf.initAlphaTable();
         var nSym = 4;
         char[] encodedMsg = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43};
-        SyndromesPolynomialCalculator syndromCalc = new SyndromesPolynomialCalculator(gf);
+        SyndromesService syndromCalc = new SyndromesService(gf);
         assert syndromCalc.calcSyndromes(new Polynomial(encodedMsg, gf), nSym).isZeroArray();
         char[] corruptedMsg = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x42};
         char[] syndrome = syndromCalc.calcSyndromes(new Polynomial(corruptedMsg, gf), nSym).toCharArray();
@@ -74,14 +75,14 @@ public class FlowTests {
     public void errorLocatorTest() {
         var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
-        SyndromesPolynomialCalculator syndromCalc = new SyndromesPolynomialCalculator(gf);
-        ErrorLocator errorLocatorCalc = new ErrorLocator(gf);
+        SyndromesService syndromCalc = new SyndromesService(gf);
+        ErrorLocatorService errorLocatorServiceCalc = new ErrorLocatorService(gf);
         var nSym = 4;
         char[] encodedMsg = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43};
         char[] corruptedMsg = new char[]{0x02, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x01};
         char[] syndrome = syndromCalc.calcSyndromes(new Polynomial(corruptedMsg, gf), nSym).toCharArray();
         Assertions.assertArrayEquals(new char[]{0x4b, 0xa7, 0xe8, 0xbd}, syndrome); // Also check Syndrome
-        char[] errLocator = errorLocatorCalc.findErrorLocator(new Polynomial(syndrome, gf), nSym).toCharArray();
+        char[] errLocator = errorLocatorServiceCalc.findErrorLocator(new Polynomial(syndrome, gf), nSym).toCharArray();
         Assertions.assertArrayEquals(new char[]{0x01, 0x12, 0x13}, errLocator); // Also check ErrLocator
     }
 
@@ -89,16 +90,16 @@ public class FlowTests {
     public void errorPositionsTest() {
         var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
-        SyndromesPolynomialCalculator syndromCalc = new SyndromesPolynomialCalculator(gf);
-        ErrorLocator errorLocatorCalc = new ErrorLocator(gf);
+        SyndromesService syndromCalc = new SyndromesService(gf);
+        ErrorLocatorService errorLocatorServiceCalc = new ErrorLocatorService(gf);
         var nSym = 4;
         char[] encodedMsg = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43};
         char[] corruptedMsg = new char[]{0x02, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x01};
         char[] syndrome = syndromCalc.calcSyndromes(new Polynomial(corruptedMsg, gf), nSym).toCharArray();
         Assertions.assertArrayEquals(new char[]{0x4b, 0xa7, 0xe8, 0xbd}, syndrome); // Also check Syndrome
-        char[] errLocator = errorLocatorCalc.findErrorLocator(new Polynomial(syndrome, gf), nSym).toCharArray();
+        char[] errLocator = errorLocatorServiceCalc.findErrorLocator(new Polynomial(syndrome, gf), nSym).toCharArray();
         Assertions.assertArrayEquals(new char[]{0x01, 0x12, 0x13}, errLocator); // Also check ErrLocator
-        ArrayList<Integer> positions = errorLocatorCalc.findPositions(new Polynomial(errLocator, gf), encodedMsg.length);
+        ArrayList<Integer> positions = errorLocatorServiceCalc.findPositions(new Polynomial(errLocator, gf), encodedMsg.length);
         positions.sort(Integer::compareTo);
         Assertions.assertArrayEquals(new Integer[]{0, 14}, positions.toArray(new Integer[0])); // Also check ErrPositions
     }
@@ -109,15 +110,15 @@ public class FlowTests {
         gf.initAlphaTable();
         char[] encodedMsg = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43}; // DONTPANIC
         char[] corrupted = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x41, 0x41};  // DONTAAAAA
-        SyndromesPolynomialCalculator syndromCalc = new SyndromesPolynomialCalculator(gf);
-        ErrorLocator errorLocatorCalc = new ErrorLocator(gf);
-        MagnitudeSearcher magnitudeSearcher = new MagnitudeSearcher(gf);
+        SyndromesService syndromCalc = new SyndromesService(gf);
+        ErrorLocatorService errorLocatorServiceCalc = new ErrorLocatorService(gf);
+        AmplitudeService amplitudeService = new AmplitudeService(gf);
         int nSym = 4;
         Polynomial syndrome = syndromCalc.calcSyndromes(new Polynomial(corrupted, gf), nSym);
 
         List<Integer> positionErrors = Arrays.asList(13, 14);
-        Polynomial errorLocPol = errorLocatorCalc.findErrorLocator(syndrome, nSym);
-        Polynomial magnitude = magnitudeSearcher.findMagnitude(positionErrors, syndrome, errorLocPol, nSym, encodedMsg.length);
+        Polynomial errorLocPol = errorLocatorServiceCalc.findErrorLocator(syndrome, nSym);
+        Polynomial magnitude = amplitudeService.findMagnitude(positionErrors, syndrome, errorLocPol, nSym, encodedMsg.length);
 
         Assertions.assertArrayEquals(new char[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x08, 0x02}, magnitude.toCharArray());
     }
@@ -130,21 +131,21 @@ public class FlowTests {
         char[] initialMsg = new char[]{0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43};
         char[] encodedMsg = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43}; // DONTPANIC
         char[] corrupted = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x41, 0x41};  // DONTAAAAA
-        SyndromesPolynomialCalculator syndromCalc = new SyndromesPolynomialCalculator(gf);
-        ErrorLocator errorLocatorCalc = new ErrorLocator(gf);
-        MagnitudeSearcher magnitudeSearcher = new MagnitudeSearcher(gf);
+        SyndromesService syndromCalc = new SyndromesService(gf);
+        ErrorLocatorService errorLocatorServiceCalc = new ErrorLocatorService(gf);
+        AmplitudeService amplitudeService = new AmplitudeService(gf);
         int nSym = 4;
         Polynomial syndrome = syndromCalc.calcSyndromes(new Polynomial(corrupted, gf), nSym);
 
         List<Integer> positionErrors = Arrays.asList(13, 14);
-        Polynomial errorLocPol = errorLocatorCalc.findErrorLocator(syndrome, nSym);
-        Polynomial magnitude = magnitudeSearcher.findMagnitude(positionErrors, syndrome, errorLocPol, nSym, encodedMsg.length);
+        Polynomial errorLocPol = errorLocatorServiceCalc.findErrorLocator(syndrome, nSym);
+        Polynomial magnitude = amplitudeService.findMagnitude(positionErrors, syndrome, errorLocPol, nSym, encodedMsg.length);
 
         Assertions.assertArrayEquals(new char[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x08, 0x02}, magnitude.toCharArray());
 
         Assertions.assertArrayEquals(
-                initialMsg,
-                magnitudeSearcher.findRealPolynomial(magnitude, new Polynomial(corrupted, gf), nSym).toCharArray()
+                encodedMsg,
+                amplitudeService.findRealPolynomial(magnitude, new Polynomial(corrupted, gf)).toCharArray()
         );
     }
 

@@ -5,12 +5,13 @@ import ru.msu.codes.Polynomial;
 
 import java.util.ArrayList;
 
-public class ErrorLocator {
+public class ErrorLocatorService {
     GaluaFieldAriphmetic gFLogic;
 
-    public ErrorLocator(GaluaFieldAriphmetic gFLogic) {
+    public ErrorLocatorService(GaluaFieldAriphmetic gFLogic) {
         this.gFLogic = gFLogic;
     }
+
     // Berlekamp–Massey algo
     public Polynomial findErrorLocator(Polynomial syndrome, int nSym) {
         var locators = new Polynomial(new int[]{1}, gFLogic);
@@ -20,20 +21,21 @@ public class ErrorLocator {
             for (int j = 1; j <= locators.degree(); j++) {
                 delta = gFLogic.sum(delta, gFLogic.multiply(locators.get(j), syndrome.get(i - j)));
             }
-            oldLocators = oldLocators.appendWithShifting(new Polynomial(new int[]{0}, gFLogic));
+            oldLocators = oldLocators.appendLeft(new Polynomial(new int[]{0}, gFLogic));
             if (delta != 0) {
                 if (oldLocators.degree() > locators.degree()) {
-                    Polynomial newLocators = oldLocators.scale(delta);
-                    oldLocators = locators.scale(gFLogic.inverse(delta));
+                    Polynomial newLocators = oldLocators.multConst(delta);
+                    oldLocators = locators.multConst(gFLogic.inverse(delta));
                     locators = newLocators;
                 }
-                locators = locators.sum(oldLocators.scale(delta));
+                locators = locators.sum(oldLocators.multConst(delta));
             }
         }
         assert locators.degree() * 2 <= nSym;
         return locators;
     }
 
+    // Error locator pol: Корни - альфы в обратных степенях позиций ошибок
     public ArrayList<Integer> findPositions(Polynomial errLocatorPol, int msgLen) {
         ArrayList<Integer> positions = new ArrayList<>();
         int totalErrs = errLocatorPol.degree(), errsFound = 0;

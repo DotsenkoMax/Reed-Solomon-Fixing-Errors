@@ -1,4 +1,4 @@
-package ru.msu.codes;
+package ru.msu.codes.corrupter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,20 +16,22 @@ public class MessageCorrupterImpl implements MessageCorrupter {
     }
 
     @Override
-    public char[] corruptMessage(char[] encodedMessage, int nBytesToCorrupt) {
-        // var stablePrefixLen = encodedMessage.length - originalWordLen;
+    public int[] corruptMessage(int[] encodedMessage, int nBytesToCorrupt) {
         var clonedIndices = new ArrayList<>(listOfIndices);
         Collections.shuffle(clonedIndices);
         var corruptedMessage = Arrays.copyOf(encodedMessage, encodedMessage.length);
-
+        var positions = new ArrayList<Integer>();
         int index = 0;
         for (var idx : clonedIndices) {
             if (index == nBytesToCorrupt) {
                 break;
             }
-            corruptedMessage[idx/* + stablePrefixLen*/] = (char) gen.nextInt(256);
+            positions.add(idx);
+            corruptedMessage[idx] = gen.nextInt(256);
             index += 1;
         }
+        positions.sort(Integer::compareTo);
+        System.out.printf("Error positions: %s\n", positions);
         return corruptedMessage;
     }
 }

@@ -3,10 +3,10 @@ package ru.msu.codes.decoder;
 import ru.msu.codes.GaluaFieldAriphmetic;
 import ru.msu.codes.Polynomial;
 
-public class SyndromesPolynomialCalculator {
+public class SyndromesService {
     GaluaFieldAriphmetic gf;
 
-    public SyndromesPolynomialCalculator(GaluaFieldAriphmetic gf) {
+    public SyndromesService(GaluaFieldAriphmetic gf) {
         this.gf = gf;
     }
 

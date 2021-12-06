@@ -5,27 +5,26 @@ import ru.msu.codes.Polynomial;
 
 import java.util.List;
 
-public class MagnitudeSearcher {
+public class AmplitudeService {
     GaluaFieldAriphmetic gFLogic;
 
-    public MagnitudeSearcher(GaluaFieldAriphmetic gFLogic) {
+    public AmplitudeService(GaluaFieldAriphmetic gFLogic) {
         this.gFLogic = gFLogic;
     }
 
-    public Polynomial findRealPolynomial(Polynomial magnitude, Polynomial corrupted, int nSym) {
+    public Polynomial findRealPolynomial(Polynomial magnitude, Polynomial corrupted) {
         assert magnitude.degree() == magnitude.degree();
-        return magnitude.sum(corrupted).getPolWithoutPrefix(nSym);
+        return magnitude.sum(corrupted);
     }
 
     // Forney Algorithm
     public Polynomial findMagnitude(List<Integer> errorIndices, Polynomial syndrome, Polynomial errorLocator, int nSym, int encodedMessageLen) {
-        Polynomial multSyndErrors = syndrome.mult(errorLocator);
-        Polynomial multNoHighSuffix = multSyndErrors.getOnlyPrefix(nSym);
+        Polynomial nominator = syndrome.mult(errorLocator).getOnlyPrefix(nSym);
         Polynomial derivativeErrLocator = errorLocator.deriveFormal();
         int[] magnitude = new int[encodedMessageLen];
         for (var idx : errorIndices) {
             var reversedAlphaInPositionDegree = gFLogic.inverse(gFLogic.getAlphaInDeg(idx));
-            var errValue = multNoHighSuffix.eval(reversedAlphaInPositionDegree);
+            var errValue = nominator.eval(reversedAlphaInPositionDegree);
             var derValue = derivativeErrLocator.eval(reversedAlphaInPositionDegree);
             var currMagnitude = gFLogic.divide(errValue, derValue);
             magnitude[idx] = currMagnitude;

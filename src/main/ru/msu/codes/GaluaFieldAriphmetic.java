@@ -30,7 +30,7 @@ public class GaluaFieldAriphmetic {
         gFValue2degreeIdx[degreeIdx2GFValue[galuaFieldDim - 1]] = 0;
     }
 
-    public int multiplyRussianPeasentMultiplicationAlgo(int lhs, int rhs) {
+    protected int multiplyRussianPeasentMultiplicationAlgo(int lhs, int rhs) {
         int remainder = 0;
         while (rhs > 0) {
             if ((rhs & 1) != 0) {
