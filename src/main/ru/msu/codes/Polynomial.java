@@ -2,64 +2,80 @@ package ru.msu.codes;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class Polynomial {
-    private int[] pol;
+    /**
+     * ASC DEGREE ORDER
+     */
+    private ArrayList<Integer> pol;
     private final GaluaFieldAriphmetic gFLogic;
 
     public Polynomial(int[] pol, GaluaFieldAriphmetic gFLogic) {
+        this.pol = new ArrayList<>();
+        for (int j : pol) {
+            this.pol.add(j);
+        }
+        this.gFLogic = gFLogic;
+    }
+
+    public Polynomial(ArrayList<Integer> pol, GaluaFieldAriphmetic gFLogic) {
         this.pol = pol;
         this.gFLogic = gFLogic;
     }
 
     public Polynomial(char[] pol, GaluaFieldAriphmetic gFLogic) {
-        this.pol = CharToHexRepr.toInt(pol);
-        this.gFLogic = gFLogic;
+        this(CharToHexRepr.toInt(pol), gFLogic);
     }
 
     public Polynomial(int n, GaluaFieldAriphmetic gFLogic) {
-        this.pol = new int[n];
-        this.gFLogic = gFLogic;
+        this(new int[n], gFLogic);
     }
 
     public int degree() {
-        return pol.length - 1;
+        return pol.size() - 1;
     }
 
     public int get(int i) {
-        return pol[i];
+        return pol.get(i);
     }
 
     public void deleteLeadingZeroes() {
-        int idx = 0;
-        while (idx < pol.length && pol[idx] == 0) {
-            ++idx;
+        int idx = degree();
+        while (idx >= 0 && pol.get(idx) == 0) {
+            pol.remove(pol.size() - 1);
+            --idx;
         }
-        if (idx == 0) return;
-        int[] newPol = new int[pol.length - idx];
-        System.arraycopy(pol, idx, newPol, 0, newPol.length);
-        pol = newPol;
+    }
+
+    private void fill(ArrayList<Integer> ar, int sz) {
+        for (int i = 0; i < sz; i++) {
+            ar.add(0);
+        }
     }
 
     public void multInPlace(Polynomial rhs) {
-        int[] new_pol = new int[rhs.degree() + degree() + 1];
+        ArrayList<Integer> ar = new ArrayList<>();
+        fill(ar, rhs.degree() + degree() + 1);
+
         for (int j = 0; j < degree() + 1; j++) {
             for (int k = 0; k < rhs.degree() + 1; k++) {
-                var multed = gFLogic.multiply(pol[j], rhs.pol[k]);
-                new_pol[k + j] = gFLogic.sum(new_pol[k + j], multed);
+                var multed = gFLogic.multiply(pol.get(j), rhs.pol.get(k));
+                ar.set(k + j, gFLogic.sum(ar.get(k + j), multed));
             }
         }
-        pol = new_pol;
+        pol = ar;
     }
 
     public Polynomial mult(Polynomial rhs) {
-        Polynomial newPol = new Polynomial(new int[rhs.degree() + degree() + 1], gFLogic);
+        ArrayList<Integer> ar = new ArrayList<>();
+        fill(ar, rhs.degree() + degree() + 1);
+        Polynomial newPol = new Polynomial(ar, gFLogic);
         for (int j = 0; j < degree() + 1; j++) {
             for (int k = 0; k < rhs.degree() + 1; k++) {
-                var multed = gFLogic.multiply(pol[j], rhs.pol[k]);
-                newPol.pol[k + j] = gFLogic.sum(newPol.pol[k + j], multed);
+                var multed = gFLogic.multiply(pol.get(j), rhs.pol.get(k));
+                newPol.pol.set(k + j, gFLogic.sum(newPol.pol.get(k + j), multed));
             }
         }
         return newPol;
@@ -68,121 +84,112 @@ public class Polynomial {
     public Polynomial scale(int val) {
         Polynomial polynomial = new Polynomial(new int[this.degree() + 1], gFLogic);
         for (int i = 0; i <= this.degree(); i++) {
-            polynomial.pol[i] = gFLogic.multiply(pol[i], val);
+            polynomial.pol.set(i, gFLogic.multiply(pol.get(i), val));
         }
         return polynomial;
     }
 
     public Polynomial sum(Polynomial rhs) {
         Polynomial polynomial = new Polynomial(new int[Math.max(rhs.degree() + 1, degree() + 1)], gFLogic);
-        if (rhs.degree() > degree()) {
-            if (rhs.degree() + 1 >= 0) System.arraycopy(rhs.pol, 0, polynomial.pol, 0, rhs.degree() + 1);
-            int delta = rhs.degree() - degree();
-            for (int i = 0; i < pol.length; i++) {
-                polynomial.pol[delta + i] = gFLogic.sum(polynomial.pol[delta+i], pol[i]);
+        for (int i = 0; i < polynomial.degree() + 1; i++) {
+            if (i < pol.size()) {
+                polynomial.pol.set(i, pol.get(i));
             }
-        } else {
-            if (degree() + 1 >= 0) System.arraycopy(pol, 0, polynomial.pol, 0, degree() + 1);
-            int delta = degree() - rhs.degree();
-            for (int i = 0; i <= rhs.degree(); i++) {
-                polynomial.pol[delta + i] = gFLogic.sum(polynomial.pol[delta + i], rhs.pol[i]);
+            if (i < rhs.pol.size()) {
+                polynomial.pol.set(i, gFLogic.sum(polynomial.pol.get(i), rhs.pol.get(i)));
             }
         }
         return polynomial;
     }
 
-    public Polynomial sumReversed(Polynomial rhs) {
-        Polynomial polynomial = new Polynomial(new int[Math.max(rhs.degree() + 1, degree() + 1)], gFLogic);
-        if (rhs.degree() > degree()) {
-            if (rhs.degree() + 1 >= 0) System.arraycopy(rhs.pol, 0, polynomial.pol, 0, rhs.degree() + 1);
-            for (int i = 0; i < pol.length; i++) {
-                polynomial.pol[i] = gFLogic.sum(polynomial.pol[i], pol[i]);
-            }
-        } else {
-            if (degree() + 1 >= 0) System.arraycopy(pol, 0, polynomial.pol, 0, degree() + 1);
-            for (int i = 0; i <= rhs.degree(); i++) {
-                polynomial.pol[i] = gFLogic.sum(polynomial.pol[i], rhs.pol[i]);
-            }
-        }
-        return polynomial;
-    }
-
-    public Polynomial append(Polynomial rhs) {
-        int[] new_pol = new int[pol.length + rhs.pol.length];
-        System.arraycopy(pol, 0, new_pol, 0, pol.length);
-        System.arraycopy(rhs.pol, 0, new_pol, pol.length, rhs.pol.length);
-        return new Polynomial(new_pol, gFLogic);
+    /**
+     * (this, rhs) -> Pol([rhs , this])
+     */
+    public Polynomial appendWithShifting(Polynomial rhs) {
+        ArrayList<Integer> ar = new ArrayList<>(degree() + rhs.degree() + 2);
+        ar.addAll(rhs.pol);
+        ar.addAll(pol);
+        return new Polynomial(ar, gFLogic);
     }
 
     public Polynomial divide(Polynomial rhs) {
-        var clonedPol = pol.clone();
-        for (int i = 0; i < clonedPol.length - rhs.pol.length + 1; i++) {
-            var coef = clonedPol[i];
+        Polynomial rhsReversed = rhs.reverse();
+        ArrayList<Integer> clonedPol = this.reverse().pol;
+        for (int i = 0; i < clonedPol.size() - rhsReversed.pol.size() + 1; i++) {
+            var coef = gFLogic.divide(clonedPol.get(i), rhsReversed.get(0));
             if (coef != 0) {
-                for (int j = 1; j < rhs.pol.length; j += 1) {
-                    if (rhs.pol[j] != 0) {
-                        clonedPol[i + j] = gFLogic.sum(clonedPol[i + j], gFLogic.multiply(rhs.pol[j], coef));
+                for (int j = 0; j < rhsReversed.pol.size(); j += 1) {
+                    if (rhsReversed.pol.get(j) != 0) {
+                        clonedPol.set(i + j, gFLogic.subtract(clonedPol.get(i + j), gFLogic.multiply(rhsReversed.pol.get(j), coef)));
                     }
                 }
             }
         }
-        var cnt = rhs.pol.length - 1;
-        int[] lastCntBytes = new int[cnt];
-        System.arraycopy(clonedPol, clonedPol.length - cnt, lastCntBytes, 0, lastCntBytes.length);
-        return new Polynomial(lastCntBytes, gFLogic);
+        var cnt = rhsReversed.degree();
+        Collections.reverse(clonedPol);
+        int deleteSize = clonedPol.size() - cnt;
+        for (int i = 0; i < deleteSize; i++) {
+            clonedPol.remove(clonedPol.size() - 1);
+        }
+        return new Polynomial(clonedPol, gFLogic);
     }
 
     public int eval(int x) {
         assert x < gFLogic.galuaFieldDim;
         var ans = 0;
-        for (var each : pol) {
+        for (int i = degree(); i >= 0; i--) {
             ans = gFLogic.multiply(ans, x);
-            ans = gFLogic.sum(ans, each);
-        }
-        return ans;
-    }
-
-    public int evalReverse(int x) {
-        assert x < gFLogic.galuaFieldDim;
-        var ans = 0;
-        for (int i = pol.length - 1; i >= 0; i--) {
-            ans = gFLogic.multiply(ans, x);
-            ans = gFLogic.sum(ans, pol[i]);
+            ans = gFLogic.sum(ans, pol.get(i));
         }
         return ans;
     }
 
     public Polynomial reverse() {
-        int[] arr = pol.clone();
-        for (int i = 0, j = arr.length - 1; i < arr.length / 2; i++, j--) {
-            int tmp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = tmp;
-        }
-        return new Polynomial(arr, gFLogic);
+        ArrayList<Integer> clonedPol = (ArrayList<Integer>) pol.clone();
+        Collections.reverse(clonedPol);
+        return new Polynomial(clonedPol, gFLogic);
     }
 
     public char[] toCharArray() {
-        return CharToHexRepr.toChar(pol);
+        return CharToHexRepr.toChar(ArrayUtils.toPrimitive(pol.toArray(new Integer[0])));
     }
 
     public int[] toIntArray() {
-        return pol;
+        return ArrayUtils.toPrimitive(pol.toArray(new Integer[0]));
     }
 
-    public int[] getWithoutSuffix(int nSym) {
-        return Arrays.copyOfRange(pol, 0, pol.length - nSym);
-    }
-    public Polynomial getPolWithoutSuffix(int nSym) {
-        return new Polynomial(Arrays.copyOfRange(pol, 0, pol.length - nSym), gFLogic);
+    public int[] getWithoutPrefix(int nSym) {
+        int[] arr = new int[pol.size() - nSym];
+        for (int i = nSym; i < pol.size(); i++) {
+            arr[i - nSym] = pol.get(i);
+        }
+        return arr;
     }
 
-    public Polynomial getOnlySuffix(int nSym) {
-        return new Polynomial(Arrays.copyOfRange(pol, pol.length - nSym, pol.length), gFLogic);
+//    public Polynomial getPolWithoutSuffix(int nSym) {
+//        return new Polynomial(Arrays.copyOfRange(pol, 0, pol.length - nSym), gFLogic);
+//    }
+
+    public Polynomial getOnlyPrefix(int nSym) {
+        ArrayList<Integer> clonedPol = (ArrayList<Integer>) pol.clone();
+        while (clonedPol.size() != nSym) {
+            clonedPol.remove(clonedPol.size() - 1);
+        }
+        return new Polynomial(clonedPol, gFLogic);
+    }
+
+    public Polynomial getPolWithoutPrefix(int nSym) {
+        ArrayList<Integer> clonedPol = reverse().pol;
+        var realLength = clonedPol.size() - nSym;
+        while (clonedPol.size() != realLength) {
+            clonedPol.remove(clonedPol.size() - 1);
+        }
+        Collections.reverse(clonedPol);
+        return new Polynomial(clonedPol, gFLogic);
     }
 
     public boolean isZeroArray() {
-        return Arrays.stream(pol).sum() == 0;
+        return pol.stream().filter(a -> a == 0).count() == pol.size();
     }
 
     /**
@@ -190,13 +197,12 @@ public class Polynomial {
      * delete all evens
      */
     public Polynomial deriveFormal() {
-        LinkedList<Integer> tmp = new LinkedList<>();
-        for (int i = degree() - 1; i >= 0; i -= 2) {
-            tmp.addFirst(pol[i]);
-            tmp.addFirst(0);
+        ArrayList<Integer> clonedPol = (ArrayList<Integer>) pol.clone();
+        clonedPol.remove(0);
+        for (int i = 1; i < clonedPol.size(); i += 2) {
+            clonedPol.set(i, 0);
         }
-        tmp.pollFirst();
-        return new Polynomial(ArrayUtils.toPrimitive(tmp.toArray(new Integer[0])), gFLogic);
+        return new Polynomial(clonedPol, gFLogic);
     }
 
 }

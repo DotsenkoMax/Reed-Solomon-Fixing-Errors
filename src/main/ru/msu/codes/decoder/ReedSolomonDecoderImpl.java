@@ -25,12 +25,12 @@ public class ReedSolomonDecoderImpl implements ReedSolomonDecoder {
         Polynomial syndrom = sundromes.calcSyndromes(corrupted, nSym);
 
         if (syndrom.isZeroArray()) {
-            return CharToHexRepr.toChar(corrupted.getWithoutSuffix(nSym));
+            return CharToHexRepr.toChar(corrupted.getWithoutPrefix(nSym));
         }
 
         Polynomial errLocatorPol = errorLocator.findErrorLocator(syndrom, nSym);
         var errorPositions = errorLocator.findPositions(errLocatorPol, messageIn.length);
-        var magnitude = magnitudeSearcher.findMagnitude(errorPositions, syndrom, errLocatorPol.reverse(), nSym, messageIn.length);
+        var magnitude = magnitudeSearcher.findMagnitude(errorPositions, syndrom, errLocatorPol, nSym, messageIn.length);
         var decodedPolynomial = magnitudeSearcher.findRealPolynomial(magnitude, corrupted, nSym);
         return decodedPolynomial.toCharArray();
     }

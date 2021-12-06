@@ -3,7 +3,7 @@ package ru.msu.codes.decoder;
 import ru.msu.codes.GaluaFieldAriphmetic;
 import ru.msu.codes.Polynomial;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MagnitudeSearcher {
     GaluaFieldAriphmetic gFLogic;
@@ -14,13 +14,13 @@ public class MagnitudeSearcher {
 
     public Polynomial findRealPolynomial(Polynomial magnitude, Polynomial corrupted, int nSym) {
         assert magnitude.degree() == magnitude.degree();
-        return magnitude.sum(corrupted).getPolWithoutSuffix(nSym);
+        return magnitude.sum(corrupted).getPolWithoutPrefix(nSym);
     }
 
     // Forney Algorithm
-    public Polynomial findMagnitude(ArrayList<Integer> errorIndices, Polynomial syndrome, Polynomial errorLocator, int nSym, int encodedMessageLen) {
+    public Polynomial findMagnitude(List<Integer> errorIndices, Polynomial syndrome, Polynomial errorLocator, int nSym, int encodedMessageLen) {
         Polynomial multSyndErrors = syndrome.mult(errorLocator);
-        Polynomial multNoHighSuffix = multSyndErrors.getOnlySuffix(nSym);
+        Polynomial multNoHighSuffix = multSyndErrors.getOnlyPrefix(nSym);
         Polynomial derivativeErrLocator = errorLocator.deriveFormal();
         int[] magnitude = new int[encodedMessageLen];
         for (var idx : errorIndices) {

@@ -12,8 +12,8 @@ public class SyndromesPolynomialCalculator {
 
     public Polynomial calcSyndromes(Polynomial messageIn, int nSym) {
         int[] arr = new int[nSym];
-        for (int i = nSym - 1; i >= 0; i--) {
-            arr[i] = messageIn.eval(gf.getAlphaInDeg(nSym - 1 - i));
+        for (int i = 1; i <= nSym; i++) {
+            arr[i - 1] = messageIn.eval(gf.getAlphaInDeg(i));
         }
         return new Polynomial(arr, gf);
     }

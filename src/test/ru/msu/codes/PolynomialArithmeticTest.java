@@ -10,9 +10,8 @@ public class PolynomialArithmeticTest {
         gf.initAlphaTable();
         var polArithm = new PolynomialArithmetic(gf);
         polArithm.initGeneratorPolynomial(4);
-
         Assertions.assertArrayEquals(
-                new char[]{0x01, 0x0f, 0x36, 0x78, 0x40},  polArithm.generatorPolynomial.toCharArray()
+                new char[]{0x40, 0x78, 0x36, 0x0f, 0x01}, polArithm.generatorPolynomial.toCharArray()
         );
     }
 }

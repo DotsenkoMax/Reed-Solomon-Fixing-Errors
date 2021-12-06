@@ -6,6 +6,7 @@ import ru.msu.codes.decoder.ErrorLocator;
 import ru.msu.codes.decoder.MagnitudeSearcher;
 import ru.msu.codes.decoder.SyndromesPolynomialCalculator;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class IntegrationTest {
@@ -58,17 +59,23 @@ public class IntegrationTest {
         var engine = new ReedSolomonEngineImpl(gf);
         var encoder = engine.getEncoder();
         var decoder = engine.getDecoder();
-        int iterations = 1000;
+        int iterations = 100000;
         var generator = new Random();
         while (iterations != 0) {
-            int[] inputMsg = genRandomArray(6, generator);
+//          System.out.println("--------------------------------------------------------");
+            int[] inputMsg = genRandomArray(80, generator);
             int nSym = (generator.nextInt(inputMsg.length) + 1) * 2;
-            var messageCorrupter = new MessageCorrupterImpl(inputMsg.length);
             polArithm.initGeneratorPolynomial(nSym);
+            var messageCorrupter = new MessageCorrupterImpl(inputMsg.length);
             char[] encodedMsg = encoder.genMessageAndRsCode(CharToHexRepr.toChar(inputMsg), nSym, polArithm);
             int actualErrs = generator.nextInt(nSym / 2);
             var corruptedMsg = messageCorrupter.corruptMessage(encodedMsg, actualErrs);
             var decodedMsg = decoder.decodeMessage(corruptedMsg, nSym, polArithm);
+//            System.out.printf("nSym %s\n", nSym);
+//            System.out.printf("Input %s\n", Arrays.toString(inputMsg));
+//            System.out.printf("Encoded %s\n", Arrays.toString(CharToHexRepr.toInt(encodedMsg)));
+//            System.out.printf("Corrupted %s\n", Arrays.toString(CharToHexRepr.toInt(corruptedMsg)));
+//            System.out.printf("Decoded %s\n", Arrays.toString(CharToHexRepr.toInt(decodedMsg)));
             Assertions.assertArrayEquals(CharToHexRepr.toChar(inputMsg), decodedMsg);
             iterations--;
             if (iterations % 10 == 0) {

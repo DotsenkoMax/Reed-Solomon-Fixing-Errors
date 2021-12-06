@@ -12,7 +12,9 @@ public class ReedSolomonEncoderImpl implements ReedSolomonEncoder {
         Polynomial messagePolynomial = new Polynomial(messageIn, gFLogic);
         Polynomial zeroPolynomial = new Polynomial(nSym, gFLogic);
 
-        Polynomial remainderPolynomial = messagePolynomial.append(zeroPolynomial).divide(polynomialArithmetic.generatorPolynomial);
-        return messagePolynomial.append(remainderPolynomial).toCharArray();
+        Polynomial remainderPolynomial = messagePolynomial
+                .appendWithShifting(zeroPolynomial)
+                .divide(polynomialArithmetic.generatorPolynomial);
+        return messagePolynomial.appendWithShifting(remainderPolynomial).toCharArray();
     }
 }
