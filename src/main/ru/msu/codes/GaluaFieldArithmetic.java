@@ -5,11 +5,29 @@ package ru.msu.codes;
  */
 public class GaluaFieldArithmetic {
 
+    /**
+     * Размерность поля Галуа
+     */
     public final int galuaFieldDim;
+    /**
+     * Модуль степени
+     */
     public final int mod;
+    /**
+     * Неприводимый полином
+     */
     public final int irreduciblePolynomial;
+    /**
+     * Генератор поля
+     */
     public final int alpha;
+    /**
+     * Степень alpha к элементу поля
+     */
     public final int[] degreeIdx2GFValue;
+    /**
+     * Элемент поля к степени alpha
+     */
     public final int[] gFValue2degreeIdx;
 
     public GaluaFieldArithmetic(int galuaFieldDim, int irreduciblePolynomial, int generatorNumber) {
@@ -40,9 +58,6 @@ public class GaluaFieldArithmetic {
         gFValue2degreeIdx[degreeIdx2GFValue[galuaFieldDim - 1]] = 0;
     }
 
-    /**
-     * @link {http://www.cut-the-knot.org/Curriculum/Algebra/PeasantMultiplication.shtml}
-     */
     protected int multiplyRussianPeasantMultiplicationAlgo(int lhs, int rhs) {
         int remainder = 0;
         while (rhs > 0) {

@@ -5,6 +5,10 @@ import ru.msu.codes.Polynomial;
 
 import java.util.ArrayList;
 
+/**
+ * Генератор полинома-локатора
+ * полином, корнями которого являются числа обратные примитивному члену в степени позиции ошибки
+ */
 public class ErrorLocatorService {
     GaluaFieldArithmetic gFLogic;
 
@@ -36,7 +40,12 @@ public class ErrorLocatorService {
         return locators;
     }
 
-    // Error locator pol: Корни - альфы в обратных степенях позиций ошибок
+    /**
+     * Метод ищет корни многочлена и по ним определяет позиции ошибок в сообщении
+     * @param errLocatorPol полином-локатор
+     * @param msgLen        длина сообщения
+     * @return позиции ошибок
+     */
     public ArrayList<Integer> findPositions(Polynomial errLocatorPol, int msgLen) {
         ArrayList<Integer> positions = new ArrayList<>();
         int totalErrs = errLocatorPol.degree(), errsFound = 0;
@@ -47,7 +56,6 @@ public class ErrorLocatorService {
             }
         }
         positions.sort(Integer::compareTo);
-
 
         assert errsFound == totalErrs;
         return positions;

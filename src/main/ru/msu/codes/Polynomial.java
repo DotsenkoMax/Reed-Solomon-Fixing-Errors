@@ -7,11 +7,9 @@ import java.util.Collections;
 
 /**
  * Полиномы над полем Галуа
+ * в порядке убывания степеней членов
  */
 public class Polynomial {
-    /**
-     * ASC DEGREE ORDER
-     */
     private ArrayList<Integer> pol;
     private final GaluaFieldArithmetic gFLogic;
 
@@ -99,6 +97,8 @@ public class Polynomial {
 
     /**
      * (this, rhs) -> Pol([rhs , this])
+     *
+     * @param rhs полином, который приписываем слева к нашему
      */
     public Polynomial appendLeft(Polynomial rhs) {
         ArrayList<Integer> ar = new ArrayList<>(degree() + rhs.degree() + 2);
@@ -129,6 +129,10 @@ public class Polynomial {
         return new Polynomial(clonedPol, gFLogic);
     }
 
+    /**
+     * @param x переменная для подстанвки в полином
+     * @return значение полинома от данной переменной
+     */
     public int eval(int x) {
         assert x < gFLogic.galuaFieldDim;
         var ans = 0;
@@ -184,8 +188,9 @@ public class Polynomial {
     }
 
     /**
+     * Производная от многочлена
      * (c*x^n)' [in GF(2)] = c * (n mod 2) * x^(n-1)
-     * delete all evens
+     * удачение четных степеней
      */
     public Polynomial deriveFormal() {
         ArrayList<Integer> clonedPol = (ArrayList<Integer>) pol.clone();
