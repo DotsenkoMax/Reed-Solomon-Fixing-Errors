@@ -9,10 +9,27 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
+enum GaluaExample {
+    ENUM_1(1 << 8, 0x11d), // x^8 + x^4 + x^3 + x^2 + 1
+    ENUM_2(1 << 8, 0x12b), // x^8 + x^5 + x^3 + x^1 + 1
+    ENUM_3(1 << 8, 0x15f), // x^8 + x^6 + x^4 + x^3 + x^2 + x + 1
+    ENUM_4(1 << 16, 0210013); // x^16 + x^12 + x^3 + x + 1
+
+    public int galuaFieldDim;
+    public int irreduciblePolynomial;
+
+    GaluaExample(int galuaFieldDim, int irreduciblePolynomial) {
+        this.galuaFieldDim = galuaFieldDim;
+        this.irreduciblePolynomial = irreduciblePolynomial;
+    }
+
+}
+
 public class Main {
+    public static GaluaExample field = GaluaExample.ENUM_4;
     public static final Scanner enter = new Scanner(System.in);
-    public static final int galuaFieldDim = 1 << 8; // 256 = GF(2^8)
-    public static final int irreduciblePolynomial = 0b100011101; // 0x11d or x^8 + x^4 + x^3 + x^2 + 1
+    public static int galuaFieldDim = field.galuaFieldDim; //1 << 8; // 256 = GF(2^8)
+    public static int irreduciblePolynomial = field.irreduciblePolynomial; //0b100011101;
     public static final int generatorNumber = 0b10; // alpha or x
     public static final Random generator = new Random(889);
 
