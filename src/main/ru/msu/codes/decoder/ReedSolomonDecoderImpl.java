@@ -29,7 +29,7 @@ public class ReedSolomonDecoderImpl implements ReedSolomonDecoder {
 
         var errLocatorPol = errorLocatorService.findErrorLocator(syndrome, nSym); // Berlekamp–Massey
         var errorPositions = errorLocatorService.findPositions(errLocatorPol, messageIn.length);
-        var magnitude = amplitudeService.findMagnitude(errorPositions, syndrome, errLocatorPol, nSym, messageIn.length);
+        var magnitude = amplitudeService.findMagnitude(errorPositions, syndrome, errLocatorPol, nSym, messageIn.length); // algorithm Forney
         var decodedPolynomial = amplitudeService.findRealPolynomial(magnitude, corrupted);
         return decodedPolynomial.deletePrefix(nSym); // Deleting error correction symbols
     }

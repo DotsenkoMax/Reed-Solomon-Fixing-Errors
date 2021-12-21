@@ -58,21 +58,6 @@ public class GaluaFieldArithmetic {
         gFValue2degreeIdx[degreeIdx2GFValue[galuaFieldDim - 1]] = 0;
     }
 
-    protected int multiplyRussianPeasantMultiplicationAlgo(int lhs, int rhs) {
-        int remainder = 0;
-        while (rhs > 0) {
-            if ((rhs & 1) != 0) {
-                remainder ^= lhs;
-            }
-            rhs >>= 1;
-            lhs <<= 1;
-
-            if ((lhs & galuaFieldDim) != 0) {
-                lhs ^= irreduciblePolynomial;
-            }
-        }
-        return remainder;
-    }
 
     public int multiply(int lhs, int rhs) {
         assert lhs < galuaFieldDim && rhs < galuaFieldDim;
@@ -109,5 +94,22 @@ public class GaluaFieldArithmetic {
 
     public int getAlphaInDeg(int i) {
         return degreeIdx2GFValue[(i % mod + mod) % mod];
+    }
+
+
+    protected int multiplyRussianPeasantMultiplicationAlgo(int lhs, int rhs) {
+        int remainder = 0;
+        while (rhs > 0) {
+            if ((rhs & 1) != 0) {
+                remainder ^= lhs;
+            }
+            rhs >>= 1;
+            lhs <<= 1;
+
+            if ((lhs & galuaFieldDim) != 0) {
+                lhs ^= irreduciblePolynomial;
+            }
+        }
+        return remainder;
     }
 }
