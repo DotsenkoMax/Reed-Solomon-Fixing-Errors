@@ -5,7 +5,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 
-@SuppressWarnings("unchecked")
+/**
+ * Полиномы над полем Галуа
+ */
 public class Polynomial {
     /**
      * ASC DEGREE ORDER

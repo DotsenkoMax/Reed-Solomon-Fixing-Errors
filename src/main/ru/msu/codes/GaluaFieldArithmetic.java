@@ -1,9 +1,12 @@
 package ru.msu.codes;
 
+/**
+ * Реализация поля Галуа и его арифметики
+ */
 public class GaluaFieldArithmetic {
+
     public final int galuaFieldDim;
     public final int mod;
-
     public final int irreduciblePolynomial;
     public final int alpha;
     public final int[] degreeIdx2GFValue;
@@ -18,6 +21,13 @@ public class GaluaFieldArithmetic {
         this.gFValue2degreeIdx = new int[galuaFieldDim];
     }
 
+    /**
+     * Инициализация массивов для сопоставления
+     * степеней генератора поля и элементов поля
+     * <p>
+     * Для произведения элементов поля используется
+     * Russian Peasant Multiplication Algorithm
+     */
     public void initAlphaTable() {
         degreeIdx2GFValue[0] = 1;
         for (int i = 1; i < degreeIdx2GFValue.length; i++) {
@@ -30,6 +40,9 @@ public class GaluaFieldArithmetic {
         gFValue2degreeIdx[degreeIdx2GFValue[galuaFieldDim - 1]] = 0;
     }
 
+    /**
+     * @link {http://www.cut-the-knot.org/Curriculum/Algebra/PeasantMultiplication.shtml}
+     */
     protected int multiplyRussianPeasantMultiplicationAlgo(int lhs, int rhs) {
         int remainder = 0;
         while (rhs > 0) {
@@ -80,6 +93,6 @@ public class GaluaFieldArithmetic {
     }
 
     public int getAlphaInDeg(int i) {
-        return degreeIdx2GFValue[(i%mod + mod)%mod];
+        return degreeIdx2GFValue[(i % mod + mod) % mod];
     }
 }
