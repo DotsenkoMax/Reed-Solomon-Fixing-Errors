@@ -1,14 +1,14 @@
 package ru.msu.codes.decoder;
 
-import ru.msu.codes.GaluaFieldAriphmetic;
+import ru.msu.codes.GaluaFieldArithmetic;
 import ru.msu.codes.Polynomial;
 
 import java.util.ArrayList;
 
 public class ErrorLocatorService {
-    GaluaFieldAriphmetic gFLogic;
+    GaluaFieldArithmetic gFLogic;
 
-    public ErrorLocatorService(GaluaFieldAriphmetic gFLogic) {
+    public ErrorLocatorService(GaluaFieldArithmetic gFLogic) {
         this.gFLogic = gFLogic;
     }
 

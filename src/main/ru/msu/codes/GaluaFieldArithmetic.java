@@ -1,6 +1,6 @@
 package ru.msu.codes;
 
-public class GaluaFieldAriphmetic {
+public class GaluaFieldArithmetic {
     public final int galuaFieldDim;
     public final int mod;
 
@@ -9,7 +9,7 @@ public class GaluaFieldAriphmetic {
     public final int[] degreeIdx2GFValue;
     public final int[] gFValue2degreeIdx;
 
-    public GaluaFieldAriphmetic(int galuaFieldDim, int irreduciblePolynomial, int generatorNumber) {
+    public GaluaFieldArithmetic(int galuaFieldDim, int irreduciblePolynomial, int generatorNumber) {
         this.galuaFieldDim = galuaFieldDim;
         this.mod = galuaFieldDim - 1;
         this.irreduciblePolynomial = irreduciblePolynomial;
@@ -21,7 +21,7 @@ public class GaluaFieldAriphmetic {
     public void initAlphaTable() {
         degreeIdx2GFValue[0] = 1;
         for (int i = 1; i < degreeIdx2GFValue.length; i++) {
-            degreeIdx2GFValue[i] = multiplyRussianPeasentMultiplicationAlgo(degreeIdx2GFValue[i - 1], alpha);
+            degreeIdx2GFValue[i] = multiplyRussianPeasantMultiplicationAlgo(degreeIdx2GFValue[i - 1], alpha);
         }
 
         for (int i = 0; i < gFValue2degreeIdx.length; i++) {
@@ -30,7 +30,7 @@ public class GaluaFieldAriphmetic {
         gFValue2degreeIdx[degreeIdx2GFValue[galuaFieldDim - 1]] = 0;
     }
 
-    protected int multiplyRussianPeasentMultiplicationAlgo(int lhs, int rhs) {
+    protected int multiplyRussianPeasantMultiplicationAlgo(int lhs, int rhs) {
         int remainder = 0;
         while (rhs > 0) {
             if ((rhs & 1) != 0) {
@@ -38,6 +38,7 @@ public class GaluaFieldAriphmetic {
             }
             rhs >>= 1;
             lhs <<= 1;
+
             if ((lhs & galuaFieldDim) != 0) {
                 lhs ^= irreduciblePolynomial;
             }

@@ -11,7 +11,7 @@ public class IntegrationTest {
 
     @Test
     public void smallTest() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         var nSym = 2;
         var polArithm = new PolynomialArithmetic(gf);
@@ -29,7 +29,7 @@ public class IntegrationTest {
     @Test
     @Ignore
     public void stressTest() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         var polArithm = new PolynomialArithmetic(gf);
         var engine = new ReedSolomonEngineImpl(gf);

@@ -1,13 +1,14 @@
 package ru.msu.codes.encoder;
 
-import ru.msu.codes.GaluaFieldAriphmetic;
+import ru.msu.codes.GaluaFieldArithmetic;
 import ru.msu.codes.Polynomial;
 import ru.msu.codes.PolynomialArithmetic;
 
 public class ReedSolomonEncoderImpl implements ReedSolomonEncoder {
-    public final GaluaFieldAriphmetic gFLogic;
 
-    public ReedSolomonEncoderImpl(GaluaFieldAriphmetic gFLogic) {
+    public final GaluaFieldArithmetic gFLogic;
+
+    public ReedSolomonEncoderImpl(GaluaFieldArithmetic gFLogic) {
         this.gFLogic = gFLogic;
     }
 

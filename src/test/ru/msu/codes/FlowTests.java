@@ -15,7 +15,7 @@ public class FlowTests {
 
     @Test
     public void divideTest() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         Polynomial divisor = new Polynomial(new char[]{0, 0, 0, 0, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43}, gf); // 0, 0, 0, 0 DONT PANIC
         Polynomial divider = new Polynomial(new char[]{0x74, 0xE7, 0xD8, 0x1E, 0x01}, gf);
@@ -24,7 +24,7 @@ public class FlowTests {
 
     @Test
     public void formalDeriveTest() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         Polynomial func = new Polynomial(new char[]{1, 45, 165, 198, 140, 223}, gf);
         Assertions.assertArrayEquals(new char[]{45, 0, 198, 0, 223}, func.deriveFormal().toCharArray());
@@ -32,7 +32,7 @@ public class FlowTests {
 
     @Test
     public void checkGenPolynom() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         int nSym = 4;
         var polArithm = new PolynomialArithmetic(gf);
@@ -42,7 +42,7 @@ public class FlowTests {
 
     @Test
     public void encodeTest() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         var encoder = new ReedSolomonEncoderImpl(gf);
         int nSym = 4;
@@ -60,7 +60,7 @@ public class FlowTests {
 
     @Test
     public void syndromTest() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         var nSym = 4;
         char[] encodedMsg = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43};
@@ -73,7 +73,7 @@ public class FlowTests {
 
     @Test
     public void errorLocatorTest() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         SyndromesService syndromCalc = new SyndromesService(gf);
         ErrorLocatorService errorLocatorServiceCalc = new ErrorLocatorService(gf);
@@ -88,7 +88,7 @@ public class FlowTests {
 
     @Test
     public void errorPositionsTest() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         SyndromesService syndromCalc = new SyndromesService(gf);
         ErrorLocatorService errorLocatorServiceCalc = new ErrorLocatorService(gf);
@@ -106,7 +106,7 @@ public class FlowTests {
 
     @Test
     public void magnitudeTest() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         char[] encodedMsg = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43}; // DONTPANIC
         char[] corrupted = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x41, 0x41};  // DONTAAAAA
@@ -126,7 +126,7 @@ public class FlowTests {
 
     @Test
     public void e2ETest() {
-        var gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+        var gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
         gf.initAlphaTable();
         char[] initialMsg = new char[]{0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43};
         char[] encodedMsg = new char[]{0xDB, 0x22, 0x58, 0x5C, 0x44, 0x4F, 0x4E, 0x27, 0x54, 0x20, 0x50, 0x41, 0x4E, 0x49, 0x43}; // DONTPANIC

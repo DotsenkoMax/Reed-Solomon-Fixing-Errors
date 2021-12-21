@@ -6,9 +6,9 @@ import ru.msu.codes.encoder.ReedSolomonEncoder;
 import ru.msu.codes.encoder.ReedSolomonEncoderImpl;
 
 public class ReedSolomonEngineImpl implements ReedSolomonEngine {
-    private final GaluaFieldAriphmetic gFLogic;
+    private final GaluaFieldArithmetic gFLogic;
 
-    public ReedSolomonEngineImpl(GaluaFieldAriphmetic gFLogic) {
+    public ReedSolomonEngineImpl(GaluaFieldArithmetic gFLogic) {
         this.gFLogic = gFLogic;
     }
 

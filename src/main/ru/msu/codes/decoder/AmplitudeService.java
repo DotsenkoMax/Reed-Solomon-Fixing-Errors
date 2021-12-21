@@ -1,14 +1,14 @@
 package ru.msu.codes.decoder;
 
-import ru.msu.codes.GaluaFieldAriphmetic;
+import ru.msu.codes.GaluaFieldArithmetic;
 import ru.msu.codes.Polynomial;
 
 import java.util.List;
 
 public class AmplitudeService {
-    GaluaFieldAriphmetic gFLogic;
+    GaluaFieldArithmetic gFLogic;
 
-    public AmplitudeService(GaluaFieldAriphmetic gFLogic) {
+    public AmplitudeService(GaluaFieldArithmetic gFLogic) {
         this.gFLogic = gFLogic;
     }
 

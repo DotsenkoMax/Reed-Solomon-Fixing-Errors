@@ -11,9 +11,9 @@ public class Polynomial {
      * ASC DEGREE ORDER
      */
     private ArrayList<Integer> pol;
-    private final GaluaFieldAriphmetic gFLogic;
+    private final GaluaFieldArithmetic gFLogic;
 
-    public Polynomial(int[] pol, GaluaFieldAriphmetic gFLogic) {
+    public Polynomial(int[] pol, GaluaFieldArithmetic gFLogic) {
         this.pol = new ArrayList<>();
         for (int j : pol) {
             this.pol.add(j);
@@ -21,16 +21,16 @@ public class Polynomial {
         this.gFLogic = gFLogic;
     }
 
-    public Polynomial(ArrayList<Integer> pol, GaluaFieldAriphmetic gFLogic) {
+    public Polynomial(ArrayList<Integer> pol, GaluaFieldArithmetic gFLogic) {
         this.pol = pol;
         this.gFLogic = gFLogic;
     }
 
-    public Polynomial(char[] pol, GaluaFieldAriphmetic gFLogic) {
+    public Polynomial(char[] pol, GaluaFieldArithmetic gFLogic) {
         this(CharToHexRepr.toInt(pol), gFLogic);
     }
 
-    public Polynomial(int n, GaluaFieldAriphmetic gFLogic) {
+    public Polynomial(int n, GaluaFieldArithmetic gFLogic) {
         this(new int[n], gFLogic);
     }
 

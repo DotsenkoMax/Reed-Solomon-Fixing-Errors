@@ -4,9 +4,9 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
-public class GaluaFieldAriphmeticTest {
+public class GaluaFieldArithmeticTest {
 
-    GaluaFieldAriphmetic gf = new GaluaFieldAriphmetic(256, 0x11d, 0b10);
+    GaluaFieldArithmetic gf = new GaluaFieldArithmetic(256, 0x11d, 0b10);
 
     @BeforeEach
     public void init() {
@@ -32,7 +32,7 @@ public class GaluaFieldAriphmeticTest {
         Assertions.assertEquals(gf.degreeIdx2GFValue[14], 0b00010011);
         Assertions.assertEquals(gf.degreeIdx2GFValue[15], 0b00100110);
         Assertions.assertEquals(gf.degreeIdx2GFValue[0], gf.degreeIdx2GFValue[255]);
-        Assertions.assertEquals(gf.multiplyRussianPeasentMultiplicationAlgo(0b10001001, 0b00101010), 0b11000011);
+        Assertions.assertEquals(gf.multiplyRussianPeasantMultiplicationAlgo(0b10001001, 0b00101010), 0b11000011);
     }
 
     @Test

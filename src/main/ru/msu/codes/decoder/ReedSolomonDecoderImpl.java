@@ -1,16 +1,16 @@
 package ru.msu.codes.decoder;
 
-import ru.msu.codes.GaluaFieldAriphmetic;
+import ru.msu.codes.GaluaFieldArithmetic;
 import ru.msu.codes.Polynomial;
 import ru.msu.codes.PolynomialArithmetic;
 
 public class ReedSolomonDecoderImpl implements ReedSolomonDecoder {
-    public final GaluaFieldAriphmetic gFLogic;
+    public final GaluaFieldArithmetic gFLogic;
     public final SyndromesService sundromes;
     public final ErrorLocatorService errorLocatorService;
     public final AmplitudeService amplitudeService;
 
-    public ReedSolomonDecoderImpl(GaluaFieldAriphmetic gFLogic) {
+    public ReedSolomonDecoderImpl(GaluaFieldArithmetic gFLogic) {
         this.gFLogic = gFLogic;
         this.sundromes = new SyndromesService(gFLogic);
         this.errorLocatorService = new ErrorLocatorService(gFLogic);

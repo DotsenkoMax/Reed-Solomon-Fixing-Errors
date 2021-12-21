@@ -1,12 +1,12 @@
 package ru.msu.codes.decoder;
 
-import ru.msu.codes.GaluaFieldAriphmetic;
+import ru.msu.codes.GaluaFieldArithmetic;
 import ru.msu.codes.Polynomial;
 
 public class SyndromesService {
-    GaluaFieldAriphmetic gf;
+    GaluaFieldArithmetic gf;
 
-    public SyndromesService(GaluaFieldAriphmetic gf) {
+    public SyndromesService(GaluaFieldArithmetic gf) {
         this.gf = gf;
     }
 

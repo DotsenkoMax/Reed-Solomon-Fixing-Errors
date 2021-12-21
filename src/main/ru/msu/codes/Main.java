@@ -18,7 +18,7 @@ public class Main {
 
     //    @SuppressWarnings("all")
     public static void main(String[] args) {
-        GaluaFieldAriphmetic gFLogic = new GaluaFieldAriphmetic(galuaFieldDim, irreduciblePolynomial, generatorNumber);
+        GaluaFieldArithmetic gFLogic = new GaluaFieldArithmetic(galuaFieldDim, irreduciblePolynomial, generatorNumber);
         gFLogic.initAlphaTable();
         PolynomialArithmetic polynomialArithmetic = new PolynomialArithmetic(gFLogic);
 
