@@ -16,7 +16,6 @@ public class Main {
     public static final int generatorNumber = 0b10; // alpha or x
     public static final Random generator = new Random(889);
 
-    //    @SuppressWarnings("all")
     public static void main(String[] args) {
         GaluaFieldArithmetic gFLogic = new GaluaFieldArithmetic(galuaFieldDim, irreduciblePolynomial, generatorNumber);
         gFLogic.initAlphaTable();

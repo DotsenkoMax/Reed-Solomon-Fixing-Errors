@@ -19,7 +19,7 @@ public class AmplitudeService {
 
     // Forney Algorithm
     public Polynomial findMagnitude(List<Integer> errorIndices, Polynomial syndrome, Polynomial errorLocator, int nSym, int encodedMessageLen) {
-        Polynomial nominator = syndrome.mult(errorLocator).getOnlyPrefix(nSym);
+        Polynomial nominator = syndrome.mult(errorLocator).getOnlyPrefix(nSym); // error polynom = (def) syndrome * errorLocator
         Polynomial derivativeErrLocator = errorLocator.deriveFormal();
         int[] magnitude = new int[encodedMessageLen];
         for (var idx : errorIndices) {

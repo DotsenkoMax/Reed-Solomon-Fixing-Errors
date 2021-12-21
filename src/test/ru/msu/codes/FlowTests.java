@@ -2,8 +2,8 @@ package ru.msu.codes;
 
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import ru.msu.codes.decoder.ErrorLocatorService;
 import ru.msu.codes.decoder.AmplitudeService;
+import ru.msu.codes.decoder.ErrorLocatorService;
 import ru.msu.codes.decoder.SyndromesService;
 import ru.msu.codes.encoder.ReedSolomonEncoderImpl;
 
@@ -148,6 +148,4 @@ public class FlowTests {
                 amplitudeService.findRealPolynomial(magnitude, new Polynomial(corrupted, gf)).toCharArray()
         );
     }
-
-
 }
