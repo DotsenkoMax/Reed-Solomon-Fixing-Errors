@@ -10,6 +10,7 @@ public class PolynomialArithmetic {
 
     /**
      * Инициализация полинома-генератора
+     * nSym -- число избыточных символов
      * (x+a^1)*...(x+a^(nSym))
      */
     public void initGeneratorPolynomial(int nSym) {

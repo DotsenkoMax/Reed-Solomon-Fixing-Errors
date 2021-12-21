@@ -9,7 +9,7 @@ public interface ReedSolomonDecoder {
 
     /**
      * @param messageIn            закодированное сообщение
-     * @param nSym                 количество дополнительных символов
+     * @param nSym                 количество избыточных символов
      * @param polynomialArithmetic класс полинома-генератора
      * @return числовое представление декодированного сообщения
      */

@@ -16,8 +16,16 @@ public class ErrorLocatorService {
         this.gFLogic = gFLogic;
     }
 
-    // Berlekamp–Massey algo
-    //  (1 + x * a^{pos_1}) * ... * (1 + x * a^{pos_k})
+
+    /**
+     * Нахождения полинома-локатора
+     * (1 + x * a^{pos_1}) * ... * (1 + x * a^{pos_k})
+     * Berlekamp–Massey algo
+     *
+     * @param syndrome полином синдромов
+     * @param nSym количество избыточных символов
+     * @return полином - локатор
+     */
     public Polynomial findErrorLocator(Polynomial syndrome, int nSym) {
         var locators = new Polynomial(new int[]{1}, gFLogic);
         var oldLocators = new Polynomial(new int[]{1}, gFLogic);
