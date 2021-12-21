@@ -13,6 +13,7 @@ public class ErrorLocatorService {
     }
 
     // Berlekamp–Massey algo
+    //  (1 + x * a^{pos_1}) * ... * (1 + x * a^{pos_k})
     public Polynomial findErrorLocator(Polynomial syndrome, int nSym) {
         var locators = new Polynomial(new int[]{1}, gFLogic);
         var oldLocators = new Polynomial(new int[]{1}, gFLogic);
